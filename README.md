@@ -45,6 +45,7 @@ Upload PDF → Copy vào kho → Hash check (chống trùng)
 ---
 
 ## 2. Cấu trúc thư mục dự án
+```bash
 rag_langchain/
 ├─ data_source/
 │ ├─ generative_ai/ # kho PDF chính (bạn copy PDF vào đây)
@@ -54,7 +55,7 @@ rag_langchain/
 └─ src/
 ├─ base/init.py
 └─ rag/init.py
-
+```
 ### Ý nghĩa từng thành phần
 - `data_source/generative_ai/`: **Document Store** chứa PDF gốc (nguồn tri thức thô).
 - `chroma_data/`: **Vector Store** (vector embeddings + documents + metadata + index).
