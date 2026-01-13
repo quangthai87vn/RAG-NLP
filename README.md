@@ -90,6 +90,200 @@ pip install \
   "pypdf>=4.2.0" \
   "gradio>=4.0.0" \
   "pymupdf"
-'''
+```
 
-sfdgdf
+5. Tiền xử lý văn bản & Chunking
+5.1. Làm sạch tiếng Việt (clean text)
+
+Mục tiêu:
+
+Chuẩn hoá Unicode (NFC) để giảm lỗi dấu tiếng Việt
+
+Loại ký tự control rác
+
+Gom khoảng trắng thừa, dòng thừa
+
+5.2. Chunking
+
+Dùng RecursiveCharacterTextSplitter:
+
+chunk_size=400
+
+chunk_overlap=120
+
+separators: ["\n\n", "\n", " ", ""]
+
+Lý do:
+
+Chunk nhỏ giúp embedding bắt nghĩa tốt
+
+Overlap giữ ngữ cảnh ở ranh giới Điều/Khoản
+
+6. Vector Database (ChromaDB) lưu như thế nào?
+
+ChromaDB persist tại:
+
+rag_langchain/chroma_data/
+
+
+VectorDB lưu:
+
+Embedding vectors (vector float cho từng chunk)
+
+Document text (nội dung chunk)
+
+Metadata (source_file, page, …)
+
+Index phục vụ similarity search nhanh
+
+⚠️ Quan trọng: Nếu đổi embedding model, bạn cần:
+
+đổi collection_name hoặc
+
+xoá chroma_data/ và rebuild
+vì vector space của model khác nhau.
+
+7. Retrieval + Similarity score (kiểm chứng)
+
+Hệ thống hỗ trợ lấy context theo 2 cách:
+
+Retriever chuẩn của LangChain (Top-k context)
+
+Chroma similarity_search_with_score để hiển thị score
+
+Ví dụ format context:
+
+[file.pdf | page 12 | score=0.1234]
+<nội dung chunk ...>
+
+
+Lưu ý: với Chroma, score thường là distance (thấp hơn = giống hơn).
+
+8. Giao diện demo (Gradio)
+
+UI gồm:
+
+Cột trái:
+
+Input câu hỏi
+
+Output câu trả lời
+
+Output Top-k context + score
+
+Cột phải:
+
+Danh sách PDF đã nạp
+
+Mở/tải PDF
+
+Upload PDF mới + ingest incremental
+
+Tab “Phương pháp” (giải thích pipeline)
+
+8.1. Preview PDF nhiều trang + Search keyword (nâng cao)
+
+Có thể render PDF → ảnh (PNG) và hiển thị gallery nhiều trang, hỗ trợ:
+
+Search keyword trong PDF
+
+Nhảy tới trang match
+
+Highlight keyword trên ảnh preview
+
+9. Kiểm tra tính chính xác (Evaluation)
+
+Đánh giá theo 3 tầng:
+
+9.1. Đánh giá Retrieval (quan trọng nhất)
+
+Gợi ý metrics:
+
+Precision@k
+
+Recall@k
+
+MRR
+
+nDCG@k (nếu có mức độ liên quan)
+
+Cách tạo ground truth nhanh:
+
+Tạo 30–100 câu hỏi
+
+Với mỗi câu, gán nhãn “chunk/trang đúng” (ít nhất 1 chunk chứa đáp án)
+
+Tính metrics theo retrieval results
+
+9.2. Đánh giá câu trả lời (Groundedness)
+
+Chấm theo rubric 0–2:
+
+2: hoàn toàn bám context
+
+1: suy diễn nhẹ
+
+0: hallucination (bịa)
+
+9.3. End-to-end (Human evaluation)
+
+Task success
+
+Điểm 1–5 theo: đúng / rõ / hữu ích / có dẫn chứng
+
+10. Ưu điểm & Nhược điểm
+Ưu điểm
+
+Explainable: hiển thị Top-k context + score + file/page
+
+Dễ mở rộng: upload PDF, ingest incremental
+
+Chi phí thấp: chạy local/1 máy vẫn demo được
+
+Tách bạch rõ: PDF store ≠ Vector store
+
+Nhược điểm
+
+PDF scan ảnh → loader có thể trích text rỗng (cần OCR)
+
+Chunking theo ký tự có thể cắt sai Điều/Khoản (nếu PDF phức tạp)
+
+Không có re-ranking → đôi khi Top-k chưa tối ưu
+
+LLM vẫn có rủi ro “bịa” nếu prompt/guard chưa chặt
+
+### 11. Hướng nâng cấp (Advanced)
+
+Hybrid Search: BM25 + Vector (giảm fail câu hỏi có keyword pháp lý)
+
+Re-ranking: Cross-Encoder / bge-reranker để lọc top-k tốt hơn
+
+Chunk theo cấu trúc luật: tách Điều/Khoản/Điểm thay vì ký tự
+
+OCR pipeline: ocrmypdf / easyocr / tesseract cho PDF scan
+
+Citations chuẩn: output kèm trích dẫn [file|page|chunk_id]
+
+Production architecture: tách Ingest service & Query service (FastAPI), logging, eval harness
+
+### 12. Lưu ý khi đổi Embedding model (trust_remote_code)
+
+Một số model (ví dụ dangvantuan/vietnamese-document-embedding) có custom code trên HuggingFace → cần bật:
+```bash
+HuggingFaceEmbeddings(
+  model_name="dangvantuan/vietnamese-document-embedding",
+  model_kwargs={"trust_remote_code": True}
+)
+```
+
+Và nhớ rebuild DB (hoặc đổi collection) như mục (6).
+
+13. Demo checklist (gợi ý thuyết trình)
+
+Chọn PDF → mở/tải hoặc preview nhiều trang
+
+Search keyword → nhảy đúng trang & highlight
+
+Đặt câu hỏi → xem Answer + Top-k context + score
+
+Giải thích pipeline: Load → Chunk → VectorDB → Retrieval → LLM → UI
