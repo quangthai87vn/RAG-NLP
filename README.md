@@ -92,8 +92,8 @@ pip install \
   "pymupdf"
 ```
 
-5. Tiền xử lý văn bản & Chunking
-5.1. Làm sạch tiếng Việt (clean text)
+### 5. Tiền xử lý văn bản & Chunking
+#### 5.1. Làm sạch tiếng Việt (clean text)
 
 Mục tiêu:
 
@@ -119,7 +119,7 @@ Chunk nhỏ giúp embedding bắt nghĩa tốt
 
 Overlap giữ ngữ cảnh ở ranh giới Điều/Khoản
 
-6. Vector Database (ChromaDB) lưu như thế nào?
+### 6. Vector Database (ChromaDB) lưu như thế nào?
 
 ChromaDB persist tại:
 
@@ -143,7 +143,7 @@ Index phục vụ similarity search nhanh
 xoá chroma_data/ và rebuild
 vì vector space của model khác nhau.
 
-7. Retrieval + Similarity score (kiểm chứng)
+### 7. Retrieval + Similarity score (kiểm chứng)
 
 Hệ thống hỗ trợ lấy context theo 2 cách:
 
@@ -159,7 +159,7 @@ Ví dụ format context:
 
 Lưu ý: với Chroma, score thường là distance (thấp hơn = giống hơn).
 
-8. Giao diện demo (Gradio)
+### 8. Giao diện demo (Gradio)
 
 UI gồm:
 
@@ -191,7 +191,7 @@ Nhảy tới trang match
 
 Highlight keyword trên ảnh preview
 
-9. Kiểm tra tính chính xác (Evaluation)
+### 9. Kiểm tra tính chính xác (Evaluation)
 
 Đánh giá theo 3 tầng:
 
@@ -231,7 +231,7 @@ Task success
 
 Điểm 1–5 theo: đúng / rõ / hữu ích / có dẫn chứng
 
-10. Ưu điểm & Nhược điểm
+### 10. Ưu điểm & Nhược điểm
 Ưu điểm
 
 Explainable: hiển thị Top-k context + score + file/page
@@ -278,7 +278,7 @@ HuggingFaceEmbeddings(
 
 Và nhớ rebuild DB (hoặc đổi collection) như mục (6).
 
-13. Demo checklist (gợi ý thuyết trình)
+### 13. Demo checklist (gợi ý thuyết trình)
 
 Chọn PDF → mở/tải hoặc preview nhiều trang
 
