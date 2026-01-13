@@ -1,5 +1,5 @@
 # RAG – Hệ thống hỏi đáp Luật Giao Thông (PDF → Chunk → VectorDB → Retrieval → LLM → UI)
-
+#### Soạn bởi: Bùi Quang Thái
 Dự án này xây dựng một hệ thống **Retrieval-Augmented Generation (RAG)** để hỏi–đáp dựa trên **tài liệu PDF tiếng Việt** (ví dụ: Luật giao thông).  
 Hệ thống hỗ trợ:
 
@@ -14,6 +14,7 @@ Hệ thống hỗ trợ:
 ## 1. Kiến trúc tổng quan
 
 ### Pipeline RAG
+```bash
 PDFs (Document Store)
 │
 ├─ Load (PyPDFLoader)
@@ -35,7 +36,7 @@ User Query
 ├─ Prompt Template (Context + Question)
 │
 └─ LLM (Qwen) → Answer
-
+```
 ### Luồng “thêm tài liệu” (incremental ingest)
 Upload PDF → Copy vào kho → Hash check (chống trùng)
 → Load → Clean → Chunk → Add to Chroma
